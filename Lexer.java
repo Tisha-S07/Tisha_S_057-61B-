@@ -3,161 +3,143 @@ import java.util.regex.*;
 
 public class Lexer {
 
-        // ---------- BANGLA NUMBER CONVERSION ----------
+    // ---------- BANGLA NUMBER CONVERSION ----------
 
-        public static String convertBanglaToEnglishNumber(
-                        String input) {
+    public static String convertBanglaToEnglishNumber(
+            String input) {
 
-                String bangla = "০১২৩৪৫৬৭৮৯";
+        String bangla = "০১২৩৪৫৬৭৮৯";
+        String english = "0123456789";
 
-                String english = "0123456789";
+        for (int i = 0; i < bangla.length(); i++) {
 
-                for (int i = 0; i < bangla.length(); i++) {
-
-                        input = input.replace(
-                                        bangla.charAt(i),
-                                        english.charAt(i));
-                }
-
-                return input;
+            input = input.replace(
+                    bangla.charAt(i),
+                    english.charAt(i));
         }
 
-        // ---------- BANGLA WORD CONVERSION ----------
+        return input;
+    }
 
-        public static String convertBanglaToEnglishWords(
-                        String input) {
+    // ---------- BANGLA WORD CONVERSION ----------
 
-                // future keywords
+    public static String convertBanglaToEnglishWords(
+            String input) {
 
-                input = input.replace(
-                                "যদি",
-                                "IF");
+        String[] bangla = {
 
-                input = input.replace(
-                                "নাহলে",
-                                "ELSE");
+                "অ", "আ", "ই", "ঈ", "উ",
+                "ঊ", "ঋ", "এ", "ঐ", "ও",
+                "ঔ",
 
-                input = input.replace(
-                                "যতক্ষণ",
-                                "WHILE");
+                "ক", "খ", "গ", "ঘ", "ঙ",
 
-                String[] bangla = {
+                "চ", "ছ", "জ", "ঝ", "ঞ",
 
-                                "অ", "আ", "ই", "ঈ", "উ",
-                                "ঊ", "ঋ", "এ", "ঐ", "ও",
-                                "ঔ",
+                "ট", "ঠ", "ড", "ঢ", "ণ",
 
-                                "ক", "খ", "গ", "ঘ", "ঙ",
+                "ত", "থ", "দ", "ধ", "ন",
 
-                                "চ", "ছ", "জ", "ঝ", "ঞ",
+                "প", "ফ", "ব", "ভ", "ম",
 
-                                "ট", "ঠ", "ড", "ঢ", "ণ",
+                "য", "র", "ল", "শ", "ষ",
+                "স", "হ",
 
-                                "ত", "থ", "দ", "ধ", "ন",
+                "ড়", "ঢ়", "য়", "ৎ",
 
-                                "প", "ফ", "ব", "ভ", "ম",
+                "ং", "ঃ", "ঁ"
+        };
 
-                                "য", "র", "ল", "শ", "ষ",
-                                "স", "হ",
+        String[] english = {
 
-                                "ড়", "ঢ়", "য়", "ৎ",
+                "a0", "a1", "a2", "a3", "a4",
+                "a5", "a6", "a7", "a8", "a9",
+                "a10",
 
-                                "ং", "ঃ", "ঁ"
-                };
+                "b0", "b1", "b2", "b3", "b4",
 
-                String[] english = {
+                "b5", "b6", "b7", "b8", "b9",
 
-                                "a0", "a1", "a2", "a3", "a4",
-                                "a5", "a6", "a7", "a8", "a9",
-                                "a10",
+                "b10", "b11", "b12", "b13", "b14",
 
-                                "b0", "b1", "b2", "b3", "b4",
+                "b15", "b16", "b17", "b18", "b19",
 
-                                "b5", "b6", "b7", "b8", "b9",
+                "b20", "b21", "b22", "b23", "b24",
 
-                                "b10", "b11", "b12", "b13", "b14",
+                "b25", "b26", "b27", "b28", "b29",
+                "b30", "b31",
 
-                                "b15", "b16", "b17", "b18", "b19",
+                "c0", "c1", "c2", "c3",
 
-                                "b20", "b21", "b22", "b23", "b24",
+                "d0", "d1", "d2"
+        };
 
-                                "b25", "b26", "b27", "b28", "b29",
-                                "b30", "b31",
+        for (int i = 0; i < bangla.length; i++) {
 
-                                "c0", "c1", "c2", "c3",
-
-                                "d0", "d1", "d2"
-                };
-
-                for (int i = 0; i < bangla.length; i++) {
-
-                        input = input.replace(
-                                        bangla[i],
-                                        english[i]);
-                }
-
-                return input;
+            input = input.replace(
+                    bangla[i],
+                    english[i]);
         }
 
-        // ---------- TOKENIZER ----------
+        return input;
+    }
 
-        public static List<String> tokenize(
-                        String line) {
+    // ---------- TOKENIZER ----------
 
-                List<String> tokens = new ArrayList<>();
+    public static List<String> tokenize(
+            String line) {
 
-                // convert bangla numbers
+        List<String> tokens = new ArrayList<>();
 
-                line = convertBanglaToEnglishNumber(
-                                line);
+        // convert bangla numbers
+        line = convertBanglaToEnglishNumber(
+                line);
 
-                // convert bangla words
+        // convert bangla words
+        line = convertBanglaToEnglishWords(
+                line);
 
-                line = convertBanglaToEnglishWords(
-                                line);
+        // token regex
+        Pattern pattern = Pattern.compile(
 
-                // token regex
+                "(\"[^\"]*\"|" +
+                        "==|" +
+                        ">|<|" +
+                        "[a-zA-Z0-9_]+|" +
+                        "\\+|\\-|\\*|\\/|" +
+                        "=|" +
+                        "\\(|\\)|" +
+                        "\\{|\\})"
+        );
 
-                Pattern pattern = Pattern.compile(
+        Matcher matcher = pattern.matcher(line);
 
-                                "(\"[^\"]*\"|" + // string
-                                                "==|" + // ==
-                                                ">|<|" + // > <
-                                                "[a-zA-Z0-9_]+|" + // variable
-                                                "\\+|\\-|\\*|\\/|" + // operators
-                                                "=|" +
-                                                "\\(|\\)|" + // brackets
-                                                "\\{|\\})" // braces
-                );
+        while (matcher.find()) {
 
-                Matcher matcher = pattern.matcher(line);
-
-                while (matcher.find()) {
-
-                        tokens.add(
-                                        matcher.group());
-                }
-
-                // ---------- INVALID TOKEN CHECK ----------
-
-                String joinedTokens = "";
-
-                for (String t : tokens) {
-
-                        joinedTokens += t;
-                }
-
-                String cleanedLine = line.replaceAll(
-                                "\\s+",
-                                "");
-
-                if (!joinedTokens.equals(
-                                cleanedLine)) {
-
-                        System.out.println(
-                                        "Invalid Token Found!");
-                }
-
-                return tokens;
+            tokens.add(
+                    matcher.group());
         }
+
+        // ---------- INVALID TOKEN CHECK ----------
+
+        String joinedTokens = "";
+
+        for (String t : tokens) {
+
+            joinedTokens += t;
+        }
+
+        String cleanedLine = line.replaceAll(
+                "\\s+",
+                "");
+
+        if (!joinedTokens.equals(
+                cleanedLine)) {
+
+            System.out.println(
+                    "Invalid Token Found!");
+        }
+
+        return tokens;
+    }
 }

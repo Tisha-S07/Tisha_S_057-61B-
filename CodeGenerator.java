@@ -4,144 +4,83 @@ import java.util.*;
 
 public class CodeGenerator {
 
-        static List<String> generatedCode = new ArrayList<>();
+    static List<String> generatedCode = new ArrayList<>();
 
-        // ---------- ADDED FIX: TRACK VARIABLES ----------
-        static Set<String> declaredVariables = new HashSet<>();
+    // ---------- TRACK VARIABLES ----------
+    static Set<String> declaredVariables = new HashSet<>();
 
-        // ---------- START PROGRAM ----------
+    // ---------- START PROGRAM ----------
+    public static void startProgram() {
 
-        public static void startProgram() {
+        generatedCode.add(
+                "public class GeneratedCode {");
 
-                generatedCode.add(
-                                "public class GeneratedCode {");
+        generatedCode.add(
+                "public static void main(String[] args) {");
+    }
 
-                generatedCode.add(
-                                "public static void main(String[] args) {");
+    // ---------- SAFE VARIABLE DECLARATION ----------
+    public static void addVariable(
+            String variable,
+            String expression) {
+
+        // first declaration
+        if (!declaredVariables.contains(
+                variable)) {
+
+            declaredVariables.add(
+                    variable);
+
+            generatedCode.add(
+                    " double " + variable + " = " + expression + ";");
         }
 
-        // ---------- ADD GENERATED LINE ----------
+        // reassignment
+        else {
 
-        public static void addLine(
-                        String line) {
-
-                generatedCode.add(
-                                "    " + line);
+            generatedCode.add(
+                    " " + variable + " = " + expression + ";");
         }
+    }
 
-        // ---------- SAFE VARIABLE DECLARATION (FIX) ----------
+    // ---------- ADD PRINT ----------
+    public static void addPrint(
+            String text) {
 
-        public static void addVariable(
-                        String variable,
-                        String expression) {
+        generatedCode.add(
+                "System.out.println(\"" + text + "\");");
+    }
 
-                // first time -> declare
-                if (!declaredVariables.contains(variable)) {
+    // ---------- END PROGRAM ----------
+    public static void endProgram() {
 
-                        declaredVariables.add(variable);
+        generatedCode.add("}");
+        generatedCode.add("}");
+    }
 
-                        generatedCode.add(
-                                        "    double " +
-                                                        variable +
-                                                        " = " +
-                                                        expression +
-                                                        ";");
+    // ---------- SAVE FILE ----------
+    public static void saveToFile() {
+
+        try {
+
+            try (FileWriter writer = new FileWriter(
+                    "GeneratedCode.java")) {
+                for (String line :
+                        generatedCode) {
+                    
+                    writer.write(
+                            line + "\n");
                 }
+            }
 
-                // later -> only assign (NO duplicate declaration)
-                else {
-
-                        generatedCode.add(
-                                        "    " +
-                                                        variable +
-                                                        " = " +
-                                                        expression +
-                                                        ";");
-                }
+            System.out.println(
+                    "\nGeneratedCode.java created successfully!");
         }
 
-        // ---------- ADD PRINT LINE ----------
+        catch (IOException e) {
 
-        public static void addPrint(
-                        String text) {
-
-                generatedCode.add(
-                                "System.out.println(\"" +
-                                                text +
-                                                "\");");
+            System.out.println(
+                    "File Writing Error!");
         }
-
-        // ---------- IF GENERATION ----------
-
-        public static void startIf(
-                        String condition) {
-
-                generatedCode.add(
-                                "if(" +
-                                                condition +
-                                                ") {");
-        }
-
-        // ---------- ELSE GENERATION ----------
-
-        public static void startElse() {
-
-                generatedCode.add(
-                                "else {");
-        }
-
-        // ---------- WHILE GENERATION ----------
-
-        public static void startWhile(
-                        String condition) {
-
-                generatedCode.add(
-                                "while(" +
-                                                condition +
-                                                ") {");
-        }
-
-        // ---------- BLOCK END ----------
-
-        public static void endBlock() {
-
-                generatedCode.add("}");
-        }
-
-        // ---------- END PROGRAM ----------
-
-        public static void endProgram() {
-
-                generatedCode.add("}");
-
-                generatedCode.add("}");
-        }
-
-        // ---------- SAVE FILE ----------
-
-        public static void saveToFile() {
-
-                try {
-
-                        FileWriter writer = new FileWriter(
-                                        "GeneratedCode.java");
-
-                        for (String line : generatedCode) {
-
-                                writer.write(
-                                                line + "\n");
-                        }
-
-                        writer.close();
-
-                        System.out.println(
-                                        "\nGeneratedCode.java created successfully!");
-                }
-
-                catch (IOException e) {
-
-                        System.out.println(
-                                        "File Writing Error!");
-                }
-        }
+    }
 }

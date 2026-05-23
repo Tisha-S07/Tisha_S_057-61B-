@@ -2,132 +2,76 @@ import java.util.*;
 
 public class Main {
 
-        public static void main(
-                        String[] args) {
+    public static void main(String[] args) {
 
-                // ---------- START CODE GENERATION ----------
+        CodeGenerator.startProgram();
 
-                CodeGenerator.startProgram();
+        String[] program = {
 
-                String[] program = {
+                "ক=৫+৩",
+                "খ=১০-৪",
+                "গ=৫*৬",
+                "ঘ=২০/৫",
 
-                                // ---------- BASIC OPERATIONS ----------
+                "ঙ=৫+৬*৩",
+                "চ=(৫+৬)*৩",
 
-                                "ক=৫+৩",
-                                "খ=১০-৪",
-                                "গ=৫*৬",
-                                "ঘ=২০/৫",
+                "ছ=((৫+২)*(৩+৪))",
+                "জ=((২+৩)*(৪+(৫*২)))",
 
-                                // ---------- OPERATOR PRECEDENCE ----------
+                "ক=৫",
+                "খ=১০",
+                "গ=ক+খ",
+                "ঘ=ক+খ*২",
 
-                                "ঙ=৫+৬*৩",
-                                "চ=(৫+৬)*৩",
+                "ক=১৫",
+                "খ=ক+৫",
 
-                                // ---------- NESTED BRACKETS ----------
+                "চ=((ক+খ)*(৩+(২*৪)))",
 
-                                "ছ=((৫+২)*(৩+৪))",
+                "if (ক<খ) ক=100 else ক=200",
+                "while (ক<205) ক=ক+1",
 
-                                "জ=((২+৩)*(৪+(৫*২)))",
+                "ছ=৫+",
+                "জ=৫++২",
+                "ঝ=(৫+২",
+                "ঞ=৫+২)",
+                "ট=৫(২+৩)",
+                "ঠ=অ+৫",
+                "ড=১০/(৫-৫)",
+                "ঢ=(())",
+                "ণ=৫+@",
+                "ত=(৫+*)২"
+        };
 
-                                // ---------- VARIABLES ----------
+        for (String line : program) {
 
-                                "ক=৫",
+            System.out.println("\n================================");
+            System.out.println("Source Code: " + line);
 
-                                "খ=১০",
+            try {
 
-                                "গ=ক+খ",
+                List<String> tokens = Lexer.tokenize(line);
 
-                                "ঘ=ক+খ*২",
+                System.out.println("Tokens: " + tokens);
 
-                                "ঙ=((ক+২)*(খ-৩))",
-
-                                // ---------- REASSIGNMENT ----------
-
-                                "ক=১৫",
-
-                                "খ=ক+৫",
-
-                                // ---------- COMPLEX MIX ----------
-
-                                "চ=((ক+খ)*(৩+(২*৪)))",
-
-                                // ---------- ERROR CASES ----------
-
-                                "ছ=৫+", // ends with operator
-
-                                "জ=৫++২", // double operator
-
-                                "ঝ=(৫+২", // missing bracket
-
-                                "ঞ=৫+২)", // extra bracket
-
-                                "ট=৫(২+৩)", // missing operator
-
-                                "ঠ=অ+৫", // undefined variable
-
-                                "ড=১০/(৫-৫)", // division by zero
-
-                                "ঢ=(())", // empty brackets
-
-                                "ণ=৫+@", // invalid token
-
-                                "ত=(৫+*)২" // invalid expression
-                };
-
-                // ---------- RUN PROGRAM ----------
-
-                for (String line : program) {
-
-                        System.out.println(
-
-                                        "\n================================");
-
-                        System.out.println(
-
-                                        "Source Code: " + line);
-
-                        try {
-
-                                // tokenize
-
-                                List<String> tokens = Lexer.tokenize(line);
-
-                                // show tokens
-
-                                System.out.println(
-
-                                                "Tokens: " + tokens);
-
-                                // parse + evaluate
-
-                                Parser.parseAndEvaluate(
-                                                tokens);
-                        }
-
-                        // ---------- ERROR RECOVERY ----------
-
-                        catch (Exception e) {
-
-                                System.out.println(
-
-                                                "Recovered From Error...");
-                        }
+                // CONTROL FLOW CHECK
+                if (tokens.get(0).equals("if") || tokens.get(0).equals("while")) {
+                    ControlFlowDispatcher.handle(tokens);
+                } else {
+                    Parser.parseAndEvaluate(tokens);
                 }
 
-                // ---------- PRINT SYMBOL TABLE ----------
-
-                Parser.printSymbolTable();
-
-                // ---------- FINISH CODE GENERATION ----------
-
-                CodeGenerator.endProgram();
-
-                // ---------- SAVE GENERATED FILE ----------
-
-                CodeGenerator.saveToFile();
-
-                System.out.println(
-
-                                "\nCompiler Finished Successfully!");
+            } catch (Exception e) {
+                System.out.println("Recovered From Error...");
+            }
         }
+
+        Parser.printSymbolTable();
+
+        CodeGenerator.endProgram();
+        CodeGenerator.saveToFile();
+
+        System.out.println("\nCompiler Finished Successfully!");
+    }
 }
