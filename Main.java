@@ -1,9 +1,21 @@
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main {
+    
 
     public static void main(String[] args) {
-
+        System.setOut(new java.io.PrintStream(System.out, true, StandardCharsets.UTF_8));
+        try {
+    System.setOut(
+        new java.io.PrintStream(
+            new java.io.FileOutputStream("output.txt", false)
+        )
+    );
+} catch (java.io.FileNotFoundException e) {
+    System.out.println("Output redirection failed");
+}
+OutputLogger.init();
         CodeGenerator.startProgram();
 
         String[] program = {
@@ -55,7 +67,6 @@ public class Main {
 
                 System.out.println("Tokens: " + tokens);
 
-                // CONTROL FLOW CHECK
                 if (tokens.get(0).equals("if") || tokens.get(0).equals("while")) {
                     ControlFlowDispatcher.handle(tokens);
                 } else {
@@ -63,9 +74,12 @@ public class Main {
                 }
 
             } catch (Exception e) {
-                System.out.println("Recovered From Error...");
+                //System.out.println("Recovered From Error...");
             }
         }
+
+        TACGenerator.printTAC();
+        TACGenerator.saveToFile();
 
         Parser.printSymbolTable();
 
